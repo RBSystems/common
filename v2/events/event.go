@@ -46,14 +46,14 @@ type Event struct {
 }
 
 type BasicDeviceInfo struct {
-	BuildingID string `json:"building-id,omitempty"`
-	RoomID     string `json:"room-id,omitempty"`
-	DeviceID   string `json:"device-id,omitempty"`
+	BuildingID string `json:"buildingID,omitempty"`
+	RoomID     string `json:"roomID,omitempty"`
+	DeviceID   string `json:"deviceID,omitempty"`
 }
 
 type BasicRoomInfo struct {
-	BuildingID string `json:"building-id,omitempty"`
-	RoomID     string `json:"room-id,omitempty"`
+	BuildingID string `json:"buildingID,omitempty"`
+	RoomID     string `json:"roomID,omitempty"`
 }
 
 func GenerateBasicDeviceInfo(deviceID string) BasicDeviceInfo {
