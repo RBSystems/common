@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/nerr"
 	"github.com/byuoitav/common/structs"
 )
@@ -173,7 +174,12 @@ func (c *CouchDB) CreateRoom(toAdd structs.Room) (structs.Room, error) {
 
 	// save the devices to create after creating the room
 	var devices []structs.Device
-	copy(devices, toAdd.Devices)
+	for _, d := range toAdd.Devices {
+		devices = append(devices, d)
+		log.L.Infof("%v", d.ID)
+	}
+	log.L.Infof("num of devices: %v", len(devices))
+	log.L.Infof("num of devices before: %v", len(toAdd.Devices))
 
 	// don't post devices to room table
 	toAdd.Devices = []structs.Device{}
@@ -203,16 +209,16 @@ func (c *CouchDB) CreateRoom(toAdd structs.Room) (structs.Room, error) {
 
 	// create the devices
 	var wg sync.WaitGroup
-	for _, device := range devices {
+	for i := range devices {
 		wg.Add(1)
 
-		go func() {
-			d, err := c.CreateDevice(device)
+		go func(dev structs.Device) {
+			d, err := c.CreateDevice(dev)
 			if err == nil {
 				toReturn.Devices = append(toReturn.Devices, d)
 			}
 			wg.Done()
-		}()
+		}(devices[i])
 	}
 
 	wg.Wait()
@@ -353,4 +359,5 @@ func (c *CouchDB) GetRoomsByRoomConfiguration(configID string) ([]structs.Room, 
 	}
 
 	return toReturn, nil
+
 }

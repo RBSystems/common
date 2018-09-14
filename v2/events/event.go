@@ -20,8 +20,8 @@ const (
 )
 
 type Event struct {
-	//GeneratingProcessor is the Processor (or system) actually generating the event. i.e. For an API call against a raspberry pi this would be the hostname of the raspberry pi running the AV-API. If the call is against AWS, this would be 'AWS'
-	GeneratingProcessor string `json:"generating-processor"`
+	//GeneratingSystem is the system actually generating the event. i.e. For an API call against a raspberry pi this would be the hostname of the raspberry pi running the AV-API. If the call is against AWS, this would be 'AWS'
+	GeneratingSystem string `json:"generating-system`
 
 	//Timestamp is the time the event took place
 	Timestamp time.Time `json:"timestamp"`
@@ -46,14 +46,14 @@ type Event struct {
 }
 
 type BasicDeviceInfo struct {
-	BuildingID string `json:"building,omitempty"`
-	RoomID     string `json:"room,omitempty"`
-	DeviceID   string `json:"device,omitempty"`
+	BuildingID string `json:"building-id,omitempty"`
+	RoomID     string `json:"room-id,omitempty"`
+	DeviceID   string `json:"device-id,omitempty"`
 }
 
 type BasicRoomInfo struct {
-	BuildingID string `json:"buildingid,omitempty"`
-	RoomID     string `json:"roomid,omitempty"`
+	BuildingID string `json:"building-id,omitempty"`
+	RoomID     string `json:"room-id,omitempty"`
 }
 
 func GenerateBasicDeviceInfo(deviceID string) BasicDeviceInfo {

@@ -153,6 +153,9 @@ If a device is passed into the fuction with a valid 'rev' field, the current dev
 `rev` must be omitted to create a new device.
 */
 func (c *CouchDB) CreateDevice(toAdd structs.Device) (structs.Device, error) {
+
+	log.L.Infof("Calling create device %v", toAdd.ID)
+
 	var toReturn structs.Device
 
 	// validate device struct
@@ -190,18 +193,23 @@ func (c *CouchDB) CreateDevice(toAdd structs.Device) (structs.Device, error) {
 	// the device document should only include the type ID
 	toAdd.Type = structs.DeviceType{ID: deviceType.ID}
 
-	// check that each of the ports are valid
-	for _, port := range toAdd.Ports {
-		if err = c.checkPort(port); err != nil {
-			return toReturn, fmt.Errorf("unable to create device: %s", err)
+	/*
+		// check that each of the ports are valid
+		for _, port := range toAdd.Ports {
+			if err = c.checkPort(port); err != nil {
+				log.L.Warnf("Invalid port")
+				//return toReturn, fmt.Errorf("unable to create device: %s", err)
+			}
 		}
-	}
+	*/
 
 	// marshal the device
 	b, err := json.Marshal(toAdd)
 	if err != nil {
 		return toReturn, fmt.Errorf("failed to marshal device: %s", err)
 	}
+
+	log.L.Infof("Adding device %v", toAdd.ID)
 
 	// post up device
 	var resp CouchUpsertResponse
@@ -504,29 +512,30 @@ func (c *CouchDB) CreateBulkDevices(devices []structs.Device) []structs.BulkUpda
 
 		// clear out extra data in the device type
 		device.Type = structs.DeviceType{ID: device.Type.ID}
+		/*
+			// check that the ports contain valid devices
+			for _, port := range device.Ports {
+				if len(port.SourceDevice) > 0 {
+					if !validPortIDs[port.SourceDevice] {
+						if _, err := c.GetDevice(port.SourceDevice); err != nil {
+							response.Message = fmt.Sprintf("invalid port %v. source device %s doesn't exist, create it before adding it to a port.", port.ID, port.SourceDevice)
+							toReturn = append(toReturn, response)
+							break
+						}
+					}
+				}
 
-		// check that the ports contain valid devices
-		for _, port := range device.Ports {
-			if len(port.SourceDevice) > 0 {
-				if !validPortIDs[port.SourceDevice] {
-					if _, err := c.GetDevice(port.SourceDevice); err != nil {
-						response.Message = fmt.Sprintf("invalid port %v. source device %s doesn't exist, create it before adding it to a port.", port.ID, port.SourceDevice)
-						toReturn = append(toReturn, response)
-						break
+				if len(port.DestinationDevice) > 0 {
+					if !validPortIDs[port.DestinationDevice] {
+						if _, err := c.GetDevice(port.DestinationDevice); err != nil {
+							response.Message = fmt.Sprintf("invalid port %v. destination device %s doesn't exist, create it before adding it to a port.", port.ID, port.DestinationDevice)
+							toReturn = append(toReturn, response)
+							break
+						}
 					}
 				}
 			}
-
-			if len(port.DestinationDevice) > 0 {
-				if !validPortIDs[port.DestinationDevice] {
-					if _, err := c.GetDevice(port.DestinationDevice); err != nil {
-						response.Message = fmt.Sprintf("invalid port %v. destination device %s doesn't exist, create it before adding it to a port.", port.ID, port.DestinationDevice)
-						toReturn = append(toReturn, response)
-						break
-					}
-				}
-			}
-		}
+		*/
 
 		if len(response.Message) > 0 {
 			toReturn = append(toReturn, response)

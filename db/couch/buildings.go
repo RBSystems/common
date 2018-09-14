@@ -11,6 +11,10 @@ import (
 
 func (c *CouchDB) GetBuilding(id string) (structs.Building, error) {
 	resp, err := c.getBuilding(id)
+	if err != nil {
+		return structs.Building{}, err
+	}
+
 	return *resp.Building, err
 }
 
