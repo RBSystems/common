@@ -3,8 +3,6 @@ package events
 import (
 	"strings"
 	"time"
-
-	"github.com/byuoitav/common/nerr"
 )
 
 /*
@@ -59,12 +57,22 @@ type BasicRoomInfo struct {
 func GenerateBasicDeviceInfo(deviceID string) BasicDeviceInfo {
 	vals := strings.Split(deviceID, "-")
 	if len(vals) != 3 {
-		return BasicDeviceInfo{Device: deviceID}, nerr.Create("Invalid device ID"+deviceID, "invalid-hostname")
+		return BasicDeviceInfo{Device: deviceID}
 	}
 
 	return BasicDeviceInfo{
 		Building: vals[0],
 		Room:     vals[0] + "-" + vals[1],
 		Device:   deviceID,
-	}, nil
+	}
+}
+
+//CheckTags just checks the list of tags for an given tag to see if it is present.
+func HasTag(e Event, t string) bool {
+	for i := range e.EventTags {
+		if e.EventTags[i] == t {
+			return true
+		}
+	}
+	return false
 }
